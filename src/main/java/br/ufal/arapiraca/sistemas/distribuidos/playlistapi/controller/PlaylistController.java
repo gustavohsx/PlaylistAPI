@@ -48,6 +48,12 @@ public class PlaylistController {
     public ResponseEntity<String> addPlaylistLink(@PathVariable int id, @RequestBody LinkPostDTO linkPostDTO) {
         Optional<PlaylistModel> playlistModelOptional = playlistRepository.findById(id);
         if (playlistModelOptional.isPresent()) {
+            if (linkPostDTO.titulo().length() > 200) {
+                return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("O Título possui mais de 200 caracteres!");
+            }
+            if (linkPostDTO.descricao().length() > 500) {
+                return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("A Descrição possui mais de 500 caracteres!");
+            }
             PlaylistModel playlistModel = playlistModelOptional.get();
             LinkModel linkModel = new LinkModel(linkPostDTO.titulo(), linkPostDTO.descricao(), linkPostDTO.url(), playlistModel);
             linkRepository.save(linkModel);

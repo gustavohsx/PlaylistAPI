@@ -39,6 +39,12 @@ public class PlaylistController {
 
     @PostMapping("/")
     public ResponseEntity<String> postPlaylist(@RequestBody PlaylistPostDTO playlistPostDTO) {
+        if (playlistPostDTO.titulo().length() > 200) {
+            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("O Título possui mais de 200 caracteres!");
+        }
+        if (playlistPostDTO.descricao().length() > 500) {
+            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("A Descrição possui mais de 500 caracteres!");
+        }
         PlaylistModel playlistModel = new PlaylistModel(playlistPostDTO.titulo(), playlistPostDTO.descricao());
         playlistRepository.save(playlistModel);
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).build();
@@ -46,14 +52,14 @@ public class PlaylistController {
 
     @PostMapping("/{id}/addlink")
     public ResponseEntity<String> addPlaylistLink(@PathVariable int id, @RequestBody LinkPostDTO linkPostDTO) {
+        if (linkPostDTO.titulo().length() > 200) {
+            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("O Título possui mais de 200 caracteres!");
+        }
+        if (linkPostDTO.descricao().length() > 500) {
+            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("A Descrição possui mais de 500 caracteres!");
+        }
         Optional<PlaylistModel> playlistModelOptional = playlistRepository.findById(id);
         if (playlistModelOptional.isPresent()) {
-            if (linkPostDTO.titulo().length() > 200) {
-                return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("O Título possui mais de 200 caracteres!");
-            }
-            if (linkPostDTO.descricao().length() > 500) {
-                return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("A Descrição possui mais de 500 caracteres!");
-            }
             PlaylistModel playlistModel = playlistModelOptional.get();
             LinkModel linkModel = new LinkModel(linkPostDTO.titulo(), linkPostDTO.descricao(), linkPostDTO.url(), playlistModel);
             linkRepository.save(linkModel);
